@@ -11,7 +11,7 @@ import SwiftUI
 struct PlaygroundStudioApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(sidebarItems: SidebarItem.sample, walkthrough: Walkthrough.sample)
         }
     }
 }

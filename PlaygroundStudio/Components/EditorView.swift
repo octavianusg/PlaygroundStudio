@@ -9,101 +9,37 @@ import SwiftUI
 import CodeEditorView
 import LanguageSupport
 
-/// Top banner that shows the guided tutorial hint, similar to Swift Playgrounds.
-struct TutorialBannerView: View {
-    let title: String
-    let bodyText: String
-
-    @Binding var currentStep: Int
-    let totalSteps: Int
-
-    var onBack: (() -> Void)?
-    var onNext: (() -> Void)?
-    var onClose: (() -> Void)?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top) {
-                // Back button and title
-                HStack(spacing: 8) {
-                    Text(title)
-                        .font(.headline)
-                }
-
-                Spacer()
-
-                // Close button
-                if let onClose {
-                    Button(action: onClose) {
-                        Image(systemName: "xmark")
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            Text(bodyText)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            HStack {
-                Button(action: { onBack?() }) {
-                    Image(systemName: "chevron.left")
-                }
-                .buttonStyle(.plain)
-                .padding(.trailing, 4)
-                .disabled(currentStep == 1)
-                .opacity(currentStep == 1 ? 0.3 : 1.0)
-
-                // Page indicator in the center
-                Spacer()
-                Text("\(currentStep) of \(totalSteps)")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                Spacer()
-
-                // Next button on the right
-                Button(action: { onNext?() }) {
-                    HStack(spacing: 4) {
-                        Text("Next")
-                        Image(systemName: "chevron.right")
-                    }
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(16)
-        .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .shadow(radius: 8, y: 4)
-        .padding([.horizontal, .top])
-    }
-}
-
-/// Main editor view combining the tutorial banner and a code editor.
 struct EditorView: View {
-    // MARK: - Tutorial state
-    @State private var currentStep: Int = 2
-    private let totalSteps: Int = 10
+    // MARK: - Data source
+    @State private var content: FileContent = .sample
+    
+    
+    // In Page Data
+    @State private var currentStepIndex: Int = 0
+    private var totalSteps: Int { content.steps.count }
     @State private var isTutorialVisible: Bool = true
-
-    // MARK: - Code editor state
-    @State private var source: String = """
-import SwiftUI\n\nstruct FirstChapter: Story {\n    var myStory: some Prose {\n        TitlePage {\n            Picture(.spaceWhale)\n            Chapter(number: 1)\n            Title(\\"Your Title\\")\n        }\n    }\n}\n\nstruct FirstChapterView_Previews: PreviewProvider {\n    static var previews: some View {\n        StoryNodePresenter(node: FirstChapter().myStory.storyNode, book: MyStoryBook())\n            .storyNodeBackgroundStyle()\n    }\n}\n
-"""
-
+    @State private var source: String
     @State private var position: CodeEditor.Position = .init()
     @State private var messages: Set<TextLocated<Message>> = []
 
     @Environment(\.colorScheme) private var colorScheme
 
+    init() {
+        _source = State(initialValue: FileContent.sample.swiftSource)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             if isTutorialVisible {
                 TutorialBannerView(
-                    title: "Create your own story",
-                    bodyText: "The first chapter of your short story is an important one. You want to catch your reader's attention right from the start to set the scene.\n\nTo add the title of your chapter, edit Title(\"Your Title\").",
-                    currentStep: $currentStep,
+                    fileStep: content.steps[currentStepIndex],
+                    currentStep: Binding(
+                        get: { currentStepIndex + 1 },
+                        set: { newValue in
+                            let newIndex = max(0, min(totalSteps - 1, newValue - 1))
+                            currentStepIndex = newIndex
+                        }
+                    ),
                     totalSteps: totalSteps,
                     onBack: handleBack,
                     onNext: handleNext,
@@ -133,13 +69,13 @@ import SwiftUI\n\nstruct FirstChapter: Story {\n    var myStory: some Prose {\n 
     // MARK: - Tutorial navigation handlers
 
     private func handleBack() {
-        guard currentStep > 1 else { return }
-        currentStep -= 1
+        guard currentStepIndex > 0 else { return }
+        currentStepIndex -= 1
     }
 
     private func handleNext() {
-        guard currentStep < totalSteps else { return }
-        currentStep += 1
+        guard currentStepIndex < totalSteps - 1 else { return }
+        currentStepIndex += 1
     }
 
     private func handleClose() {

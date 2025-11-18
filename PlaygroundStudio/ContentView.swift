@@ -9,32 +9,21 @@ import SwiftUI
 
 struct ContentView: View {
 
-    // MARK: - Right pane mode
-
+    //Data
+    @State var sidebarItems: [SidebarItem]
+    @State var walkthrough: Walkthrough?
+    
+    
     private enum RightPaneMode {
         case preview
         case walkthrough
     }
-
     @State private var rightPaneMode: RightPaneMode = .preview
-
-    // Sidebar data
-    @State private var sidebarItems: [SidebarItem] = [
-        SidebarItem(name: "Chapters", iconName: "folder.fill", children: [
-            SidebarItem(name: "FirstChapter.swift", iconName: "doc.text"),
-            SidebarItem(name: "SecondChapter.swift", iconName: "doc.text"),
-            SidebarItem(name: "ThirdChapter.swift", iconName: "doc.text")
-        ]),
-        SidebarItem(name: "Walkthroughs", iconName: "folder.fill", children: [
-            SidebarItem(name: "Story Walkthrough", iconName: "book"),
-            SidebarItem(name: "Advanced Tips", iconName: "lightbulb")
-        ])
-    ]
-
+    
     var body: some View {
         GeometryReader { proxy in
             NavigationSplitView {
-                SidebarView(items: sidebarItems)
+                SidebarView(items: $sidebarItems)
             } content: {
                 EditorView()
             } detail: {
@@ -43,7 +32,7 @@ struct ContentView: View {
                     case .preview:
                         PreviewView()
                     case .walkthrough:
-                        WalkthroughView()
+                        WalkthroughView(walkthrough: Walkthrough.sample)
                     }
                 }
             }
@@ -75,5 +64,7 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(
+        sidebarItems: SidebarItem.sample, walkthrough: Walkthrough.sample
+    )
 }
