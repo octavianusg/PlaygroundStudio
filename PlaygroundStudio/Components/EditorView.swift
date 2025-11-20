@@ -16,7 +16,7 @@ struct EditorView: View {
     
     // In Page Data
     @State private var currentStepIndex: Int = 0
-    private var totalSteps: Int { content.steps.count }
+    private var totalSteps: Int { content.steps?.count ?? 0 }
     @State private var isTutorialVisible: Bool = true
     @State private var source: String
     @State private var position: CodeEditor.Position = .init()
@@ -30,9 +30,9 @@ struct EditorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if isTutorialVisible {
+            if isTutorialVisible , let steps = content.steps{
                 TutorialBannerView(
-                    fileStep: content.steps[currentStepIndex],
+                    fileStep: steps[currentStepIndex],
                     currentStep: Binding(
                         get: { currentStepIndex + 1 },
                         set: { newValue in

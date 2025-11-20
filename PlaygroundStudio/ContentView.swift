@@ -10,20 +10,25 @@ import SwiftUI
 struct ContentView: View {
 
     //Data
-    @State var sidebarItems: [SidebarItem]
+    @State var project: PlaygroundProject
     @State var walkthrough: Walkthrough?
     
+    init(project: PlaygroundProject, walkthrough: Walkthrough?) {
+        self._project = State(initialValue: project)
+        self._walkthrough = State(initialValue: walkthrough)
+    }
     
     private enum RightPaneMode {
         case preview
         case walkthrough
     }
+    
     @State private var rightPaneMode: RightPaneMode = .preview
     
     var body: some View {
         GeometryReader { proxy in
             NavigationSplitView {
-                SidebarView(items: $sidebarItems)
+                SidebarView(items: $project.chapters)
             } content: {
                 EditorView()
             } detail: {
@@ -64,7 +69,10 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(
-        sidebarItems: SidebarItem.sample, walkthrough: Walkthrough.sample
-    )
+    ContentView(project: PlaygroundProject(name: "math", description: "test", chapters: [
+        PlaygroundChapter(name: "trigonomtry", modules: [
+            PlaygroundModules(name: "sin", moduleDescription: "hello")
+        ])
+        
+    ]), walkthrough: nil)
 }

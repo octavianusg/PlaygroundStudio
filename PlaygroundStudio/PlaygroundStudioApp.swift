@@ -11,7 +11,22 @@ import SwiftUI
 struct PlaygroundStudioApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(sidebarItems: SidebarItem.sample, walkthrough: Walkthrough.sample)
+            if #available(macOS 26.0, *) {
+                PromptInputView(prompt: "", output: "")
+            } else {
+                Text("Not Available")
+            }
+        }
+        
+        WindowGroup(id: "content", for: PlaygroundProject.self) { project in
+            if let project = project.wrappedValue {
+                ContentView(
+                    project: project ,
+                    walkthrough: nil
+                )
+            } else {
+                Text("No Project")
+            }
         }
     }
 }

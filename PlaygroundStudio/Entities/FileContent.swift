@@ -7,11 +7,15 @@
 
 
 import Foundation
+import FoundationModels
 
+@Generable
 public struct FileContent: Equatable {
+    
     public var title: String
+    @Guide(description: "the swift source fle")
     public var swiftSource: String
-    public var steps: [FileStep]
+    public var steps: [FileStep]?
 
     public init(title: String, swiftSource: String, steps: [FileStep]) {
         self.title = title
@@ -20,9 +24,13 @@ public struct FileContent: Equatable {
     }
 }
 
+@Generable
 public struct FileStep: Identifiable, Equatable {
     public let id = UUID()
+    @Guide(description: "Header of the steps")
     public var title: String
+    
+    @Guide(description: "Description of the hint")
     public var body: String
 
     public init(title: String, body: String) {
@@ -30,8 +38,6 @@ public struct FileStep: Identifiable, Equatable {
         self.body = body
     }
 }
-
-
 
 public extension FileContent {
     static let sample: FileContent = .init(
