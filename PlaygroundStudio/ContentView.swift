@@ -45,6 +45,16 @@ struct ContentView: View {
         .toolbar {
             ToolbarItemGroup {
                 Button {
+                    //
+                } label: {
+                    Text("Open in XCode")
+                }
+                .help("Show live preview")
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                
+                
+                Button {
                     rightPaneMode = .preview
                 } label: {
                     Label("Preview", systemImage: "rectangle.and.text.magnifyingglass")

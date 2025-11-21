@@ -12,7 +12,7 @@ struct PlaygroundStudioApp: App {
     var body: some Scene {
         WindowGroup {
             if #available(macOS 26.0, *) {
-                PromptInputView(prompt: "", output: "")
+                PromptInputView(prompt: PromptInput())
             } else {
                 Text("Not Available")
             }

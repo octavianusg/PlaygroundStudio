@@ -5,10 +5,11 @@ import FoundationModels
 
 @available(macOS 26.0, *)
 struct PromptInputView: View {
-    @State var prompt: String = ""
+    @State var prompt: PromptInput
+    var onSubmit: ((PromptInput) -> Void)?
     @State var output: String = ""
-    var onSubmit: (() -> Void)?
     var onClear: (() -> Void)?
+    var exportManager = PlaygroundBookExportManager()
     
     @State private var isResponding = false
     
@@ -26,14 +27,27 @@ struct PromptInputView: View {
                 Task { await generate() }
             }
             .buttonStyle(.borderedProminent)
-            .disabled(isResponding || prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .disabled(isResponding || prompt.generalPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
             Button("Clear") {
-                prompt = ""
+                prompt = PromptInput()
                 output = ""
                 onClear?()
             }
             .buttonStyle(.bordered)
+//            Button("test") {
+//                do {
+//                    let projectURL = try exportManager.buildTemplateSampleToDesktop(
+//                        newFolderName: "TemplateSample Build",
+//                        replaceExisting: true
+//                    )
+//                    print("Opened Xcode project at: \(projectURL.path)")
+//                } catch {
+//                    print("Error: \(error.localizedDescription)")
+//                }
+//            }
+//            .buttonStyle(.bordered)
+            
         }
         .task {
             #if canImport(FoundationModels)
@@ -91,11 +105,24 @@ struct PromptInputView: View {
                 }
 
                 Button {
-                    if let fullProject = playgroundGenerator?.playgroundProject {
-                        //openWindow(id: "content", value: fullProject)
-                    }
-                } label: { Text("Open Result in New Window") }
+                    openWindow(id: "content")
+                    
+                } label: { Text("Edit Playground in New Window") }
                 .buttonStyle(.borderedProminent)
+                
+                Button("Open in XCode") {
+                    do {
+                        let projectURL = try exportManager.buildTemplateSampleToDesktop(
+                            newFolderName: "TemplateSample Build",
+                            replaceExisting: true
+                        )
+                        print("Opened Xcode project at: \(projectURL.path)")
+                    } catch {
+                        print("Error: \(error.localizedDescription)")
+                    }
+                }
+                .buttonStyle(.bordered)
+                
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(4)
@@ -119,13 +146,25 @@ struct PromptInputView: View {
                 .font(.headline)
 
             HStack {
-                TextField("Type your prompt…", text: $prompt, axis: .vertical)
+                TextField("Type your prompt…", text: $prompt.generalPrompt, axis: .vertical)
+                    .lineLimit(3...6)
+                    .textFieldStyle(.roundedBorder)
+            }
+            HStack{
+                TextField("Learning Objective", text: $prompt.learningObjective,axis: .vertical)
                     .lineLimit(3...6)
                     .textFieldStyle(.roundedBorder)
             }
 
+            
+            TextField("Target school level (age or grade)", text: $prompt.targetSchoolLevel,axis: .vertical)
+                .lineLimit(3...6)
+                .textFieldStyle(.roundedBorder)
+            TextField("Teacher or parent intent (goals, constraints, emphasis)", text: $prompt.teacherOrParentIntent,axis: .vertical)
+                .lineLimit(3...6)
+                .textFieldStyle(.roundedBorder)
+            
             PromptControls()
-
             ScrollView {
                 ProjectSummaryView()
             }
@@ -136,7 +175,7 @@ struct PromptInputView: View {
     }
     
     private func generate() async {
-        let trimmedPrompt = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedPrompt = prompt.finalPrompt.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedPrompt.isEmpty else { return }
         
         isResponding = true
@@ -146,8 +185,8 @@ struct PromptInputView: View {
         
         #if canImport(FoundationModels)
         do {
-            let _ = try? await playgroundGenerator?.generateContent(prompt: trimmedPrompt)
-            onSubmit?()
+            let _ = try? await playgroundGenerator?.generateContent(prompt: prompt.finalPrompt)
+            print(prompt.finalPrompt)
             //openWindow(value: trimmedPrompt)
         } catch {
             output = "Error: \(error.localizedDescription)"
@@ -161,10 +200,11 @@ struct PromptInputView: View {
 
 #Preview{
     if #available(macOS 26.0, *) {
-        PromptInputView()
+        PromptInputView(prompt: PromptInput())
             .previewDisplayName("Prompt Input")
     } else {
         // Fallback on earlier versions
         Text("Mac not supported")
     }
 }
+

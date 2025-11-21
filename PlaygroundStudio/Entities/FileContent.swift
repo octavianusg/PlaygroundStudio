@@ -13,7 +13,7 @@ import FoundationModels
 public struct FileContent: Equatable {
     
     public var title: String
-    @Guide(description: "the swift source fle")
+    @Guide(description: "the swift source file")
     public var swiftSource: String
     public var steps: [FileStep]?
 

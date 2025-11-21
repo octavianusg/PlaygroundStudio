@@ -28,7 +28,7 @@ struct PlaygroundModules: Identifiable, Codable, Hashable {
     @Guide(description: "Name of the module")
     var name: String
     
-    @Guide(description: "Describe the objective of this modules on what the students can archieve")
+    @Guide(description: "Describe the objective of this modules on what the students can archieve and what the playground can do")
     var moduleDescription: String
 
     @Guide(description: "The swift code content")

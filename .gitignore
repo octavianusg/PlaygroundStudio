@@ -1,0 +1,54 @@
+# Xcode
+DerivedData/
+build/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# SwiftPM
+.swiftpm/
+.build/
+Package.resolved
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# User-specific files
+*.swp
+*.swo
+*.DS_Store
+*.orig
+*~
+*.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Archives and zips
+*.zip
+*.tar
+*.gz
+*.tgz
+
+# Fastlane (if used)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Carthage (if used)
+Carthage/Build/
+
+# CocoaPods (if used)
+Pods/
+*.xcworkspace
+
+# SPM Xcode integration artifacts
+.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/

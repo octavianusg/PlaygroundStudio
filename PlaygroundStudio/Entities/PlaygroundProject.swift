@@ -17,7 +17,17 @@ struct PlaygroundProject: Identifiable, Codable, Hashable {
     @Guide(description: "name of the project")
     var name: String
     
-    @Guide(description: "description of the project and the overview of all modules and chapter")
+    @Guide(description: """
+                This will be desription of the
+                1. **A brief Feynman-style explanation** of the concept written for the student’s level.
+                2. **Three sequenced activities**, each containing:
+                   * **Title**
+                   * **Concept focus**
+                   * **SpriteKit setup** (nodes, physics bodies, asset pack items, layout)
+                   * **Gesture-based interactions** (detailed, step-by-step)
+                   * **Feedback mechanics** (collisions, gravity changes, animations, sounds, visual states)
+                   * **Learner discovery**: what the student should realize through the interaction
+""")
     var description: String
     
     @Guide(description: "All chapters needed for the teachers complete the learning objective")
@@ -61,6 +71,18 @@ struct PlaygroundProject: Identifiable, Codable, Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
+    
+    
+    static var sample: PlaygroundProject = PlaygroundProject(id: UUID(),
+                                                             name: "The Fair Share Slicer",
+                                                             description: "",
+                                                             chapters: [
+                                                                .init(name: "Pages", modules: [
+                                                                    .init(name: "The Fair Share Slicer", moduleDescription: ""),
+                                                                    .init(name: "The Shape Splitter Challenge", moduleDescription: ""),
+                                                                    .init(name: "The Fraction Size Sorter", moduleDescription: "")
+                                                                ])
+                                                             ])
     
 }
 

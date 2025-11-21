@@ -13,10 +13,10 @@ struct PlaygroundChapter: Identifiable, Codable, Hashable {
 
     var id = UUID()
     
-    @Guide(description: "Name of the module or chapter depending on the kind of item")
+    @Guide(description: "Name of the module or chapter depending on the kind of item.This will be the name of the playground chapter")
     var name: String
     
-    @Guide(description: "Describe the objective of this chapter on what the students can archieve")
+    @Guide(description: "Describe the objective of this chapter on what the students can archieve and what the playground experiences will do")
     var description: String = ""
     
     @Guide(description: "The modules that is needed which will contain the swift content and step by step instructions")
